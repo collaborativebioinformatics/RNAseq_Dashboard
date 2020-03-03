@@ -4,7 +4,7 @@
 
 The Genome-Wide RNA-Seq Viewer is a web application that enables users to visualize genome-wide expression data from data in count format.
 
-This repository contains a data pipeline written in Python.  It extracts aligned RNA-Seq data from count format and transforms it into a format used by [Ideogram.js](https://github.com/eweitz/ideogram), a JavaScript library for chromosome visualization.  The minimal front-end allows users to see the distribution of genes across the entire human genome, and filter them by expression levels in the SRA/GEO sample or gene type.
+This repository contains a data pipeline written in Python.  It extracts aligned RNA-Seq data from count format and transforms it into a format used by [Ideogram.js](https://github.com/eweitz/ideogram), a JavaScript library for chromosome visualization.  The minimal front-end allows users to see the distribution of genes across the entire human genome.
 
 # How to
 Broadly, the pipeline does the following:
@@ -64,3 +64,5 @@ head GLDS-21_array_differential_expression.csv
 After running the steps above, you can [plug the JSON data into Ideogram.js](https://github.com/NCBI-Hackathons/rnaseqview/blob/master/SRR562646.html#L159) to view and filter RNA-Seq data on the entire human genome.
 
 ![Visualization of a filtered genome-wide expression dataset for SRR562646](https://raw.githubusercontent.com/NCBI-Hackathons/rnaseqview/master/rnaseqview_SRR562646.png)
+
+*Authors: Lisa Bang, David Hughes, Ernesto Iacucci, Sue Sarafrazi.*
