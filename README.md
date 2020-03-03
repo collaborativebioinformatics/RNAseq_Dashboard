@@ -26,15 +26,15 @@ https://eweitz.github.io/ideogram/differential-expression
 ## DGE matrix format
 The DGE matrix has several groups of columns, with headers ordered like so:
 
-* metadata: “REFSEQ”,”SYMBOL”,”GENENAME”,”ENSEMBL”,”ENTREZID”,”STRING_id”,”GOSLIM_IDS”
+* metadata: `“REFSEQ”,”SYMBOL”,”GENENAME”,”ENSEMBL”,”ENTREZID”,”STRING_id”,”GOSLIM_IDS”`
 
-* replicates: <sample_prefix>-<group>-<replicate_number>, e.g. “Mmus-C57-6T-TMS-FLT-Rep1”
+* replicates: `<sample_prefix>-<group>-<replicate_number>, e.g. “Mmus-C57-6T-TMS-FLT-Rep1”`
 
- * stats: “All.mean”,”All.stdev”,”F.p.value”
+ * stats: `“All.mean”,”All.stdev”,”F.p.value”`
 
-* stats_by_group: Group.<stat>_(<group>), e.g. “Group.Mean_(Space Flight)”
+* stats_by_group: `Group.<stat>_(<group>), e.g. “Group.Mean_(Space Flight)”`
 
-* stats_by_comparison: <stat>_(<group1>)v(<group2>), e.g. “Log2fc_(Ground Control)v(Space Flight)”
+* stats_by_comparison: `<stat>_(<group1>)v(<group2>), e.g. “Log2fc_(Ground Control)v(Space Flight)”`
 
 Example DGE matrix
 An example DGE matrix is [GLDS-21_array_differential_expression.csv](https://genelab-data.ndc.nasa.gov/genelab/static/media/dataset/GLDS-21_array_differential_expression.csv?version=1) from [GLDS-21](https://genelab-data.ndc.nasa.gov/genelab/accession/GLDS-21/), produced by NASA GeneLab. Below is an excerpt.
