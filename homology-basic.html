@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Homology, basic | Ideogram</title>
+  <style>
+    body {font: 14px Arial; line-height: 19.6px; padding: 0 15px;}
+    a, a:visited {text-decoration: none;}
+    a:hover {text-decoration: underline;}
+    a, a:hover, a:visited, a:active {color: #0366d6;}
+  </style>
+  <script type="text/javascript" src="dist/js/ideogram.min.js"></script>
+<link rel="icon" type="image/x-icon" href="img/ideogram_favicon.ico">
+</head>
+<body>
+  <h1>Homology, basic | Ideogram</h1>
+  <a href="/ideogram">Overview</a> |
+  <a href="orthologs">Previous</a> |
+  <a href="homology-advanced">Next</a> |
+  <a href="https://github.com/eweitz/ideogram/blob/gh-pages/homology-basic.html" target="_blank">Source</a>
+  <p>
+    Pseudoautosomal regions (PAR) are the only parts of chromosomes X and Y
+    that typically undergo genetic recombination.  PAR1 and PAR2 are depicted
+    below.  See also <a href="homology-advanced">Compare, structure</a>.
+  </p>
+<script type="text/javascript">
+
+function onIdeogramLoad() {
+
+	var chrs = ideogram.chromosomes,
+		chrX = chrs['9606']['X'],
+		chrY = chrs['9606']['Y'];
+
+	var par1X = {chr: chrX, start: 10001, stop: 2781479};
+	var par1Y = {chr: chrY, start: 10001, stop: 2781479};
+
+	var par2X = {chr: chrX, start: 155701383, stop: 156030895};
+	var par2Y = {chr: chrY, start: 56887903, stop: 57217415};
+
+	var pseudoautosomalRegions = [
+		{'r1': par1X, 'r2': par1Y},
+		{'r1': par2X, 'r2': par2Y}
+	];
+
+	ideogram.drawSynteny(pseudoautosomalRegions);
+}
+
+var config = {
+  organism: 'human',
+  chromosomes: ['X', 'Y'],
+  chrHeight: 400,
+  chrMargin: 200,
+  showBandLabels: true,
+  perspective: 'comparative',
+  rotatable: false,
+  onLoad: onIdeogramLoad
+};
+
+var ideogram = new Ideogram(config);
+
+</script>
+</body>
+</html>

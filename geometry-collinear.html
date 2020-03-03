@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Geometry, collinear | Ideogram</title>
+  <style>
+    body {font: 14px Arial; line-height: 19.6px; padding: 0 15px;}
+    a, a:visited {text-decoration: none;}
+    a:hover {text-decoration: underline;}
+    a, a:hover, a:visited, a:active {color: #0366d6;}
+  </style>
+  <style>
+    #chrMargin, #expressionThreshold {
+      position: relative;
+      top: 5px;
+    }
+    #expressionThresholdContainer {
+      position: relative;
+      top: -6px;
+    }
+
+    #chrMarginContainer {
+      position: relative;
+      top: -18px;
+    }
+
+    .glossary {
+      border-bottom: 1px #555 dashed;
+      cursor: help;
+    }
+  </style>
+  <script type="text/javascript" src="dist/js/ideogram.min.js"></script>
+<link rel="icon" type="image/x-icon" href="img/ideogram_favicon.ico">
+</head>
+<body>
+  <h1>Geometry, collinear | Ideogram</h1>
+  <a href="/ideogram">Overview</a> |
+  <a href="../">Overview</a> |
+  <a href="differential-expression">Previous</a> |
+  <a href="layout-small">Next</a> |
+  <a href="https://github.com/eweitz/ideogram/blob/gh-pages/geometry-collinear.html" target="_blank">Source</a>
+  <p>
+    Gene expression in four <a href="https://en.wikipedia.org/wiki/Oligodendroglioma">brain cancer</a>
+    samples, showing 1p and 19q deletions.  
+    Data from <a href="https://github.com/broadinstitute/inferCNV">inferCNV</a>.  
+    Unlike the
+    <a href="annotations-heatmap.html">parallel arrangement</a>, this ideogram is
+    collinear -- the chromosomes form a line together.
+  </p>
+  <p>
+    Click chromosomes to see gene expression in single-cell resolution.
+    The default view shows average expression among all cells in each sample.
+  </p>
+
+  <script type="text/javascript">
+
+    d3 = Ideogram.d3;
+
+    function updateMargin(event) {
+      window.chrMargin = parseInt(event.target.value);
+      config.chrMargin = chrMargin;
+      ideogram = new Ideogram(config);
+    }
+
+    function addMarginControl() {
+      chrMargin = (typeof chrMargin === 'undefined' ? 10 : chrMargin)
+        marginSlider =
+          `<label id="chrMarginContainer">
+            Chromosome margin
+          <input type="range" id="chrMargin" list="chrMarginList" value="` + chrMargin + `">
+          </label>
+          <datalist id="chrMarginList">
+            <option value="0" label="0%">
+            <option value="10">
+            <option value="20">
+            <option value="30">
+            <option value="40">
+            <option value="50" label="50%">
+            <option value="60">
+            <option value="70">
+            <option value="80">
+            <option value="90">
+            <option value="100" label="100%">
+          </datalist>`;
+        d3.select('#_ideogramLegend').node().innerHTML += marginSlider;
+    }
+
+    /**
+     * Adjust "Expression threshold" by increasing or decreasing sensitivity
+     * for what expression values are considered "high" or "low".  Increasing
+     * this threshold widens the range of values considered normal.
+     */
+    function updateThreshold(event) {
+      var thresholds, newThreshold, numThresholds, i;
+
+      window.expressionThreshold = parseInt(event.target.value);
+
+      window.adjustedExpressionThreshold = Math.round(expressionThreshold/10 - 4);
+      thresholds = window.originalHeatmapThresholds;
+      numThresholds = thresholds.length;
+      config.heatmapThresholds = []
+
+      // If expressionThreshold > 1, increase thresholds above middle, decrease below
+      // If expressionThreshold < 1, decrease thresholds above middle, increase below
+      for (i = 0; i < numThresholds; i++) {
+        if (i + 1 > numThresholds/2) {
+          newThreshold = thresholds[i + adjustedExpressionThreshold];
+        } else {
+          newThreshold = thresholds[i - adjustedExpressionThreshold];
+        }
+        config.heatmapThresholds.push(newThreshold);
+      }
+      ideogram = new Ideogram(config);
+    }
+
+    function addThresholdControl() {
+      if (typeof(expressionThreshold) === 'undefined') {
+        expressionThreshold = 50;
+        window.originalHeatmapThresholds = ideogram.rawAnnots.metadata.heatmapThresholds;
+      }
+
+      expressionThresholdSlider =
+        `<label id="expressionThresholdContainer">
+            <span class="glossary" title="Denoiser.  Adjusts mapping between inferCNV's output heatmap threshold values and normal vs. loss/gain signal.  Analogous to inferCNV denoise parameters, e.g. --noise_filter.">
+            Expression threshold
+            </span>
+          <input type="range" id="expressionThreshold" list="expressionThresholdList" value="` + expressionThreshold + `">
+          <datalist id="expressionThresholdList">
+            <option value="0" label="0.">
+            <option value="10">
+            <option value="20">
+            <option value="30">
+            <option value="40">
+            <option value="50" label="1">
+            <option value="60">
+            <option value="70">
+            <option value="80">
+            <option value="90">
+            <option value="100" label="1.5">
+          </datalist>
+          <br/><br/>`;
+      d3.select('#_ideogramLegend').node().innerHTML += expressionThresholdSlider;
+    }
+
+    function changeEventHandler(event) {
+      var id = event.target.id;
+      if (id === 'expressionThreshold') updateThreshold(event);
+      if (id === 'chrMargin') updateMargin(event);
+    }
+
+    function addControls() {
+      addThresholdControl();
+      addMarginControl();
+
+      document.removeEventListener('change', changeEventHandler);
+      document.addEventListener('change', changeEventHandler);
+    }
+
+    var legend = [{
+      name: 'Expression level',
+      rows: [
+        {name: 'Low', color: '#33F'},
+        {name: 'Normal', color: '#CCC'},
+        {name: 'High', color: '#F33'}
+      ]
+    }];
+
+    // Cache raw matrix data and genome annotation data,
+    // to speed up load of 2D genomic heatmaps
+    rawMatrixPath = 'https://www.googleapis.com/storage/v1/b/ideogram/o/oligodendroglioma%2finfercnv.observations.optimized.txt?alt=media';
+    d3.text(rawMatrixPath).then(function(data) {
+      matrixRawAnnotsCache = data;
+    });
+    genomeAnnotationPath = 'dist/data/annotations/Homo_sapiens,_Ensembl_80.tsv';
+    d3.text(genomeAnnotationPath).then(function(data) {
+      genomeAnnotationCache = data;
+    });
+
+    // Monkey patch d3.text to intercept request and
+    // return cached response for raw matrix data
+    originalD3Text = d3.text;
+    d3.text = function(url) {
+      if (url === rawMatrixPath && typeof matrixRawAnnotsCache !== 'undefined') {
+        return new Promise(function(resolve) { resolve(matrixRawAnnotsCache) });
+      } else if (/Ensembl/.test(url) && typeof genomeAnnotationCache !== 'undefined') {
+        return new Promise(function(resolve) { resolve(genomeAnnotationCache) });
+      } else {
+        return originalD3Text(url);
+      }
+    }
+
+    // Toggle between collinear multi-chromosome ideogram with
+    // average-expression heatmaps and single-chromosome ideogram
+    // with raw single-cell expression heatmaps.
+    function setOnChromosomeClick() {
+      d3.selectAll(ideogram.selector + ' .chromosome').on('click', function () {
+        chr = this.id.split('-')[0].split('chr')[1];
+        if (ideogram.config.annotationsLayout === 'heatmap-2d') {
+          thisConfig = config;
+        } else {
+          thisConfig = {
+            organism: 'human',
+            chromosome: chr,
+            chrHeight: 425,
+            showBandLabels: false,
+            legend: legend,
+            onLoad: setOnChromosomeClick,
+            annotationsPath: rawMatrixPath,
+            heatmapThresholds: [0.533, 0.8, 1.2, 1.433],
+            annotationHeight: 3,
+            annotationsLayout: 'heatmap-2d',
+          }
+        }
+
+        ideogram = new Ideogram(thisConfig);
+      });
+    }
+
+    config = {
+      organism: 'human',
+      orientation: 'horizontal',
+      geometry: 'collinear',
+      chrHeight: 80,
+      chrMargin: 10,
+      onLoad: setOnChromosomeClick,
+      legend: legend,
+      annotationHeight: 30,
+      annotationsLayout: 'heatmap',
+      annotationsPath: 'data/annotations/oligodendroglioma_cnv_expression.json',
+      onDrawAnnots: addControls
+    }
+
+    ideogram = new Ideogram(config);
+  </script>
+
+</body>
+</html>

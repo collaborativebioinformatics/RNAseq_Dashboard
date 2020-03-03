@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Annotations, heatmap | Ideogram</title>
+  <script type="text/javascript" src="dist/js/ideogram.min.js"></script>
+<link rel="icon" type="image/x-icon" href="img/ideogram_favicon.ico">
+  <style>
+    body {font: 14px Arial; line-height: 19.6px; padding: 0 15px;}
+    a, a:visited {text-decoration: none;}
+    a:hover {text-decoration: underline;}
+    a, a:hover, a:visited, a:active {color: #0366d6;}
+  </style>
+</head>
+<body>
+<h1>Annotations, heatmap | Ideogram</h1>
+<a href="/ideogram">Overview</a> |
+<a href="annotations-animated">Previous</a> |
+<a href="differential-expression">Next</a> |
+  <a href="https://github.com/eweitz/ideogram/blob/gh-pages/annotations-heatmap.html" target="_blank">Source</a>
+<p>
+    All human genes, annotated in heatmaps.  The proximal heatmap for each chromosome shows gene distribution
+    by expression.  The distal heatmap shows gene distribution by type.
+</p>
+<div id="container"></div>
+
+<div class="note">
+    Expression data from NCBI SRA and GEO (<a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR562645">SRR562645</a>, <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE40705">GSE40705</a>)
+    via <a href="https://github.com/NCBI-Hackathons/rnaseqview#rnaseqview">rnaseqview</a> pipeline.
+</div>
+<script type="text/javascript">
+
+  var annotationTracks = [
+    {id: 'expressionLevelTrack', displayName: 'Expression level'},
+    {id: 'geneTypeTrack', displayName: 'Gene type'},
+  ];
+
+  var legend = [
+    {
+      name: 'Expression level',
+      rows: [
+        {color: '#88F', name: 'Low'},
+        {color: '#CCC', name: 'Medium'},
+        {color: '#F33', name: 'High'}
+      ]
+    },
+    {
+      name: 'Gene type',
+      rows: [
+        {color: '#00F', name: 'mRNA'},
+        {color: '#0AF', name: 'misc_RNA'},
+        {color: '#AAA', name: 'miRNA'},
+        {color: '#FA0', name: 'tRNA'},
+        {color: '#F00', name: 'lncRNA'}
+      ]
+    }
+  ]
+
+  var heatmaps = [
+      {
+        key: 'expression-level',
+        thresholds: [
+          ['2', '#88F'],
+          ['4', '#CCC'],
+          ['+', '#F33']]
+      },
+      {
+        key: 'gene-type',
+        thresholds: [
+          ['0', '#00F'],
+          ['1', '#0AF'],
+          ['2', '#AAA'],
+          ['3', '#FA0'],
+          ['4', '#F00']
+        ]
+      }
+    ]
+
+  var config = {
+    container: '#container',
+    organism: 'human',
+    assembly: 'GRCh37',
+    chrHeight: 275,
+    annotationsPath: 'data/annotations/SRR562646.json',
+    annotationsLayout: 'heatmap',
+    legend: legend,
+    heatmaps: heatmaps,
+    annotationTracks: annotationTracks,
+    rotatable: false // Support for rotatable heatmaps is planned
+  };
+
+  var ideogram = new Ideogram(config);
+</script>
+</body>
+</html>

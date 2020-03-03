@@ -65,4 +65,4 @@ After running the steps above, you can [plug the JSON data into Ideogram.js](htt
 
 ![Visualization of a filtered genome-wide expression dataset for SRR562646](https://raw.githubusercontent.com/NCBI-Hackathons/rnaseqview/master/rnaseqview_SRR562646.png)
 
-*Authors: Lisa Bang, David Hughes, Ernesto Iacucci, Sue Sarafrazi.*
+*Authors: Lisa Bang, David Hughes, Ernesto Iacucci, Rushi Patel, Sue Sarafrazi.*
